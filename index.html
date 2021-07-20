@@ -1,0 +1,561 @@
+<!doctype html>
+<html>
+
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GSHN2BZVKW"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-GSHN2BZVKW');</script>
+    <meta charset="utf-8" />
+    <title>Socket Escape!</title>
+
+    <!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZIM Zapps
+Progressive Web App (PWA) tool output from
+https://zimjs.com/zapps 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;700&display=swap" rel="stylesheet">
+    <!-- ZIM PWA STEP 1 - MANIFEST -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- ZIM PWA STEP 2 - META -->
+    <meta name="apple-mobile-web-app-title" content="Socket Escape">
+    <meta name="theme-color" content="#971f1f">
+    <meta name="msapplication-TileColor" content="#971f1f">
+
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="apple-touch-icon" href="icons/icon_152.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="msapplication-TileImage" content="icons/icon_144.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#971f1f">
+    <meta name="msapplication-TileColor" content="#1e0723">
+    <meta name="theme-color" content="#1e0723">
+
+    <!-- from https://www.favicon-generator.org/ -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="msapplication-starturl" content="./">
+
+    <!-- ZIM PWA STEP 3 - SERVICE WORKER -->
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            if (location.protocol === "https:" && "serviceWorker" in navigator) navigator.serviceWorker.register("./serviceworker.js");
+        });
+    </script>
+
+    <!-- Welcome to ZIM at http://zimjs.com - Code Interactive Media Pizzazz! 	        -->
+    <!-- ZIM runs on the HTML Canvas powered by JavaScript and CreateJS http://createjs.com -->
+    <!-- Founded by Inventor Dan Zen - http://danzen.com - Canadian New Media Award Winner 	-->
+    <!-- ZIM is free to use. You can donate to help improve ZIM at http://zimjs.com/donate 	-->
+
+
+    <!-- PWA STEP 4 - LOCAL FILES FOR CACHE -->
+
+    <script src="libraries/1.3.2/createjs.js"></script>
+    <script src="libraries/cat/04/zim.js"></script>
+    <!-- use zimjs.com/distill for minified individual functions! -->
+
+    <script src="libraries/game_2.4.js"></script>
+    <script scr="https://zimjs.org/cdn/pizzazz_01.js"></script>
+    <script src="libraries/pizzazz_03.js"></script>
+    <script src="libraries/socket.io.js"></script>
+    <script src="libraries/zimserver_urls.js"></script>
+    <script src="libraries/zimsocket_1.1.js"></script>
+
+    
+
+    <script>
+
+        const scaling = "fit"; // this will resize to fit inside the screen dimensions
+        const width = 1280;
+        const height = 720;
+        const color = "#1e0723";
+        const outerColor = "#1e0723";
+
+        // const win, timer, timeInterval; // objects used across both frames
+
+        // as of ZIM 5.5.0 you do not need to put zim before ZIM functions and classes
+
+        // PWA STEP 4b - LOCAL FILES FOR CACHE
+        // for caching purposes, did not use remote google font
+        // var assets = {src:"https://fonts.googleapis.com/css?family=Oawald"};
+
+        var assets = ["cursor00.png", "cursor01.png", "cursor02.png", "cursor03.png", "cursor04.png", "bg.jpg", "box_closed.png", "box_opened.png", "input.png", "lock.png", "unlock.png", "noise.png", "tvOn.png", "tvOff.png", "start.mp3", "correct.mp3", "incorrect.mp3", "box-open.mp3", "bg-fade.mp3", "victory.mp3", { font: "Oswald", src: "https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;700&display=swap" }];
+        var path = "assets/";
+        var waiter = new Waiter(frame, null, "#971f1f", "#451a4d", 0);
+        var frame = new Frame(scaling, width, height, color, outerColor, assets, path, waiter);
+
+        // var frame = new Frame({outerColor:outerColor, color:outerColor, assets:assets, path:path});
+        // const waiter = new Waiter(frame, null, "#971f1f", null, 0);
+        // waiter.show();
+        frame.on("ready", function () {
+            zog("ready from ZIM Frame");
+            waiter.hide();
+
+            // ZIM PWA STEP 4 - ADD TO HOME SCREEN (A2HS)
+            // Message shows if only if running from mobile Browser
+            // See https://zimjs.com/docs.html?item=PWA for more options
+
+            new PWA(runZapp);
+            function runZapp() {
+                var mobileCheck = mobile();
+
+                stage = frame.stage;
+                stageW = frame.width;
+                stageH = frame.height;
+
+                window.removeEventListener("keydown", frame.zil[0]);                
+
+                STYLE = {
+                    type: {
+                        Tile: {
+                            cols: 3,
+                            width: 500
+                        }
+                    }
+                }
+
+
+                // splash page for entering user name
+                // need to create a scrambled puzzle that will allow multiple players to interact
+                // scramble puzzle
+                // a key, that can be press down and drag
+                // timer - win/lose within time
+                // a door for winning hit test
+                //*************************** Socket starts here ****************************************
+                //Socket(server, appName, roomName, maxPeople, fill, initObj)
+
+
+                game();
+                function game() {
+                    // zogg(zimSocketURL);
+                    const socket = new Socket(zimSocketURL, "escapepuzzle", null, 4, true);
+
+                    socket.on("ready", data => {
+                        zogg("socket is ready");
+                        // stage.disposeAllChildren();
+                        // zogg(data);
+
+                        // create a backing bigger than the stage? bring in all the assets
+                        const bg = asset("bg.jpg");
+                        const backing = new Container(1800, bg.height).center();
+                        bg.addTo(backing);
+                        // backing.cache();
+
+
+                        //********************************** Game assets **********************************************
+                        let cursor = asset(assets[rand(4)]);
+                        const lock = asset("lock.png").pos(913, 13, RIGHT, BOTTOM, backing).cur();
+                        const noise = asset("noise.png").pos(435, 418, LEFT, TOP, backing);
+                        const input = asset("input.png").pos(519, 378, LEFT, TOP, backing).cur();
+                        const unlock = asset("unlock.png");
+
+                        const tvOn = asset("tvOn.png").pos(755, 265, RIGHT, TOP, backing);
+                        const tvOff = asset("tvOff.png").pos(755, 265, RIGHT, TOP, backing);
+                        tvOn.visible = false;
+                        tvOff.visible = true;
+
+                        const box_closed = asset("box_closed.png")
+                        box_closed.pos(538, 182, RIGHT, BOTTOM, backing);
+
+                        const box_opened = asset("box_opened.png")
+                        box_opened.pos(538, 182, RIGHT, BOTTOM, backing);
+                        box_opened.visible = false;
+                        box_closed.visible = true;
+
+                        // add light animation
+                        const light = new Circle(20, "#fabc97").pos(359, 258, RIGHT, TOP, backing).alp(.8).effect(new GlowEffect({color:"#f9a16c", blurX:150, blurY:150, knockout:true})).animate({
+                            props:{"effects.glow.blurX":0, "effects.glow.blurY":0},
+                            time:3,
+                            rewind: true,
+                            rewindWait:.2,
+                            loop:true
+                        });
+
+                        // Toggle(width, height, label, startToggled, backgroundColor, margin, indicatorType, indicatorColor, tap, toggleBackgroundColor, color, borderColor, borderWidth, corner, indicatorCorner, shadowColor, shadowBlur, time, labelLeft, style, group, inherit)
+                        const boxToggle = new Toggle({
+                            width:box_closed.width, 
+                            height: box_closed.height, 
+                            backgroundColor: faint, 
+                            toggleBackgroundColor: faint, 
+                            indicatorColor: faint,
+                            corner: 10
+                        }).loc(box_closed);
+
+                        let boxCheck = boxToggle.toggled;
+                        
+                        boxToggle.on("change", (e) => {
+                            // zogg(e.target.toggled);
+                            boxCheck = e.target.toggled;
+                            socket.setProperties({boxCheck: e.target.toggled});
+                            boxControl();
+                            asset("box-open.mp3").play();
+                        });
+
+                        function boxControl() {
+                            if (!boxCheck) {
+                                box_closed.visible = true;
+                                box_opened.visible = false;
+                            } else {
+                                box_closed.visible = false;
+                                box_opened.visible = true;
+                            }
+                        }
+
+                        const noiseToggle = new Toggle({
+                            width:noise.width*0.8, 
+                            height: noise.height, 
+                            backgroundColor: faint, 
+                            toggleBackgroundColor: faint, 
+                            indicatorColor: faint,
+                            corner: 10
+                        }).loc(noise);
+
+                        let noiseCheck = noiseToggle.toggled;
+
+                        noiseToggle.on("change", (e) => {
+                            zogg(e.target.toggled);
+                            noiseCheck = e.target.toggled;
+                            socket.setProperties({noiseCheck: e.target.toggled});
+                            noiseControl();
+                        });
+
+                        function noiseControl() {
+                            if (!noiseCheck) {
+                                num.visible = false;
+                                numCheck = false;
+                                tvOff.visible = true;
+                                tvOn.visible = false;
+                                asset("correct.mp3").play();
+                            } else {
+                                tvOff.visible = false;
+                                tvOn.visible = true;
+                                asset("correct.mp3").play();
+                                
+                            }
+                        }
+
+                        const pwd = rand(10000, 99999);
+
+                        const num = new Label({
+                            text: pwd,
+                            size: 26,
+                            font: "Oswald",
+                            color: "#36364c"
+                        }).pos(924, 302, LEFT, TOP, backing).alp(.85);
+
+                        num.visible = false;
+                        let numCheck = false;
+
+                        input.on("click", () => {
+                            // console.log(noiseCheck);
+                            if (!noiseCheck) {
+                                asset("incorrect.mp3").play();
+                                return
+                            }
+                            numCheck = true;
+                            socket.setProperties({ numCheck: true })
+                            numControl();
+                            asset("correct.mp3").play();
+                        });
+
+                        function numControl() {
+                            num.ske(8).alp(0.1).animate({
+                                props:{alpha:.85},
+                                time:0.5,
+                            });
+                            num.visible = true;
+                        }
+                       
+                        const pane = new Pane({
+                            width: frame.width*0.7,
+                            height: frame.height*0.7,
+                            corner: 5,
+                            label: new Label({color: white, text:"WHAT IS THE PASSWORD?", size:60, font: "Oswald"}),
+                            backgroundColor: "#971f1f"
+                        }).center().alp(.75).hide();
+
+                        pane.on("close", () => {
+                            asset("box-open.mp3").play();
+                        })
+                        pane.label.mov(0, -100);
+                        let winCheck = false;
+
+                        const submit = new Button({
+                            width: 200, 
+                            height: 65, 
+                            corner: 5,
+                            backgroundColor: "#451a4d",
+                            rollBackgroundColor: "#9364fe",
+                            label: new Label({color: white, text:"SUBMIT", size:36, font: "Oswald", align: "center", valign: "middle"}),
+                        }).center(pane).mov(0,130).tap(submitData);        
+
+                        const textArea = new TextArea({
+                            color: white, 
+                            backgroundColor: "#da545d",
+                            height:60, 
+                            size:40, 
+                            placeholder:"ENTER HERE"})
+                                .center(pane)
+                                .mov(0,-10);
+
+                        lock.on("click", () => {
+                            pane.show();
+                            p.top();
+                            asset("box-open.mp3").play();
+                        });
+
+                        function submitData() {
+                            if (textArea.text == pwd) {
+                                asset("correct.mp3").play();
+                                winCheck = true;
+                                socket.setProperties({ winCheck: true })
+                                pane.hide();
+                                endGame()
+                            }else {
+                                asset("incorrect.mp3").play();
+                                return
+                            }
+                        } 
+                        
+                        frame.on("keydown", (e) => {
+                            if (e.key == "Enter") {
+                                e.preventDefault();
+                                submitData();
+                                pane.hide();
+                            }
+                        })
+
+
+                        //opening pane
+                        const openingText = 'WELCOME! FIND A WAY OUT OF THIS "SOCKET ESCAPE" BY WORKING IN TEAM OF 2 - 4 PEOPLE. ENJOY!';
+                        const opening = new Pane({
+                            width: frame.width*0.7,
+                            height: frame.height*0.7,
+                            corner: 5,
+                            label: new Label({color: white, text: openingText, size: 50, font: "Oswald", align: "center", labelWidth: 730, lineHeight: 65}),
+                            backgroundColor: "#971f1f"
+                        }).center().alp(.75);
+
+                        //"start.mp3", "correct.mp3", "incorrect.mp3", "box-open.mp3", "bg-fade.mp3"
+                        opening.on("close", () => {
+                            asset("start.mp3").play();
+                            timeout(3, () => {
+                                asset("bg-fade.mp3").play();
+                            });
+                        })
+
+                        // set a single property
+                        // socket.setProperty("name", "Wing");
+                        //*************************************** PLAYER *************************************
+                        // create a single player and tell others about this new player
+                        // const p = new Circle(30, [pink, blue, green, purple, orange]).centerReg().noMouse();
+                        const p = cursor.clone().center().reg(25, 25).noMouse().top();
+                        // console.log(p.fileID);
+                        const controller = new MotionController({
+                            target: p,
+                            type: "mousemove",
+                            speed: 20,
+                            damp: .4,
+                            boundary: new Boundary(backing.x, backing.y, backing.width, backing.height)
+                        });
+
+                        // follow(obj, boundary, damp, dampY, leftOffset, rightOffset, upOffset, downOffset, offsetDamp, offsetDampY, horizontal, vertical, borderLock, lag)
+                        frame.follow({
+                            obj: p,
+                            damp: 0.01,
+                            dampY: 0.01,
+                            vertical: false,
+                            lag: true
+                        });
+                        frame.followBoundary = new Boundary(backing.x, backing.y, backing.width, backing.height)
+
+                        socket.setProperties({
+                            // name: "Wing", // use dynamic name from the landing page input
+                            pFileID: p.fileID,
+                            pX: p.x,
+                            pY: p.y,
+                            pLevel: p.level
+                        });
+
+                        controller.on("moving", () => {
+                            // console.log(p.x, p.y);
+                            socket.setProperties({
+                                pX: Math.round(p.x),
+                                pY: Math.round(p.y),
+                            });
+                        });
+
+                        //sample data needed for the game from the player (p)
+                        // { id:{ pX:100, pY:100, pLevel:1, pFileID:"#333", id:id},
+                        //   id2:{ pX:100, pY:100, pLevel:2, pFileID:red, id:id }
+                        // }
+
+                        //*************** add existing players in the socket room and check all other available game data ***********
+                        const players = {};
+                        loop(data, (id, props) => {
+                            // console.log(props.pFileID);
+                            cursor = asset(props.pFileID);
+                            players[id] = cursor.clone().loc(props.pX, props.pY).reg(25, 25).alp(0.1).animate({
+                            props: { alpha: 1 },
+                            time: .3
+                            });
+                            boxCheck = socket.getLatestValue("boxCheck");
+                            boxControl();
+            
+                            noiseCheck = socket.getLatestValue("noiseCheck");
+                            noiseControl();
+                        })
+
+                        // set the levels of each players in order
+                        loop(data, (id, props) => {
+                            players[id].level = props.pLevel;
+                        })
+
+                        //****************************************** socket updates *************************************************
+                        // in case of socket resets
+                        if (socket.data) socket.off("data", socket.data);
+                        if (socket.leave) socket.off("data", socket.leave);
+
+                        // socket on the data (state) change event, do the data updates below
+                        socket.on("data", data => {
+                            // if the player is already in the record
+                            if (players[data.id]) {
+                                if (data.pX != null) players[data.id].x = data.pX;
+                                if (data.pY != null) players[data.id].y = data.pY;
+                                if (data.pLevel != null) players[data.id].level = data.pLevel;
+                                if (data.pFileID != null) players[data.id].p.fileID = data.pFileID;
+                            } else { // if the player is new, add that new player in the record
+                                cursor = asset(data.pFileID);
+                                players[data.id] = cursor.clone().loc(data.pX, data.pY).reg(25, 25).alp(0.1).animate({
+                                    props: { alpha: 1 },
+                                    time: .3
+                                });
+                            }
+                            // if any game elements changed
+                            if (data.boxCheck != null) {
+                                boxCheck = socket.getLatestValue("boxCheck");
+                                boxToggle.toggled = boxCheck;
+                                console.log(boxToggle.toggled, boxCheck);
+                                boxControl();
+                            }
+                            if (data.noiseCheck != null) {
+                                noiseCheck = socket.getLatestValue("noiseCheck");
+                                noiseToggle.toggled = noiseCheck;
+                                noiseControl();
+                            }
+                            if (data.numCheck == true) {
+                                numControl();
+                            }
+                            if (data.winCheck == true) {
+                                endGame();
+                            }
+                            stage.update();
+                        });
+
+                        // when player leaves, remove player
+                        socket.on("otherleave", data => {
+                            let currentPlayer = players[data.id];
+
+                            if (currentPlayer) {
+                                currentPlayer.animate({
+                                    props: { alpha: 0 },
+                                    time: .7,
+                                    call: () => { currentPlayer.removeFrom() }
+                                })
+                            }
+                            // avatars[data.id].removeFrom(); // removes from the stage
+                            // players[data.id].dispose(); // removes and clears from memory
+                            delete players[data.id]; // js tp delete property from object
+                            stage.update();
+                        });
+
+                        // refresh frame size on resize just in case
+                        frame.on("resize", () => {
+                            stageW = frame.width;
+                            stageH = frame.height;
+                            frame.followBoundary = new Boundary(backing.x, backing.y, backing.width, backing.height)
+                        });
+
+
+                        // zogg(data);
+                        function endGame() {
+                            asset("victory.mp3").play();
+                            backing.disposeAllChildren();
+                            timeout(1, () => {
+                                alert("Congrats! Someone in your Room has solved the puzzle. Happy Socket Escape!");
+                                });
+                            unlock.centerReg().sca(.9).alp(0).animate({
+                                props:{scale: 1.2, alpha: 1},
+                                time: 9,
+                                call: () => { location.reload() }
+                            })
+                        }
+
+
+
+                        //************************************** for PWA *****************************************
+                        let pwa;
+
+                        if (mobile() && !(window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone) || document.referrer.includes('android-app://'))) {
+                            pwa = new Pane({
+                                width: 1200,
+                                height: 230,
+                                label: new Label({ text: "This is a Progressive Web App (PWA)\nPlease add to home screen as an app", lineHeight: 44 }),
+                                backgroundColor: yellow
+                            }).show()
+                            pwa.label.mov(40);
+                            const pwaShape = new Shape().s(dark).ss(3, 1, 0, 3).p("AAAj0IAAFJAA8hoIBuAAIAAFdIlTAAIAAldIBuAA")
+                                .sca(1.6).loc(-340, -5, pwa);
+                            const pwaShape2 = new Shape().s(dark).ss(3, 1, 0, 3).p("AhGAlIBGhGIBHBG")
+                                .sca(1.6).loc(-340, -40, pwa);
+                        }
+
+
+                        frame.on("resize", function () {
+                            stageW = frame.width;
+                            stageH = frame.height;
+
+                            // RESCALE PWA if needed
+                            if (pwa) pwa.scaleTo(stage, 105).center();
+                            
+                            // pwa.scaleTo(stage, 105).center();
+                            // 
+                            return
+                        
+                        });
+
+                        stage.update(); // update the stage to see any changes
+
+                    }) // end of socket
+                } // end of game
+
+            } // end of PWA runZapp;
+        }); // end of ZIM frame on
+    </script>
+
+
+</head>
+<style>
+    #myCanvas {
+        cursor: none;
+    }
+</style>
+<body>
+    <!-- canvas with id="myCanvas" is made by zim Frame -->
+    <div id=myCanvasAlternative>Sorry, this App requires Canvas</div>
+</body>
+
+</html>
