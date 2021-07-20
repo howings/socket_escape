@@ -1,3 +1,5 @@
+<img src="https://github.com/howings/socket_escape/blob/main/assets/se.png">
+
 Socket Escape is a Real-time multiplayer online escape room game demo created with Zim.js framework. 
 This is a small project for PWA and real-time socket game test.
 Each room maximum fits 4 players.
