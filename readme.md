@@ -5,6 +5,8 @@ This is a small project for PWA and real-time socket game test.
 Each room maximum fits 4 players.
 As soon as one player of the team wins, game ends. 
 
+Right to the game --> https://socketescape.netlify.app/
+
 
 ***Information about ZIM.js framework for creative HTML canvas animation.***
 ZIM Zapps - PWA Tool Instructions 
